@@ -30,8 +30,8 @@ func part1(lines []string) {
 }
 
 func part2(lines []string) {
-	mul_regexp := `(mul\(\d{1,3},\d{1,3}\))|(do\(\))|(don\'t\(\))`
-	r := regexp.MustCompile(mul_regexp)
+	mulRegexp := `(mul\(\d{1,3},\d{1,3}\))|(do\(\))|(don\'t\(\))`
+	r := regexp.MustCompile(mulRegexp)
 	sum := 0
 	isEnabled := true
 	for _, l := range lines {
