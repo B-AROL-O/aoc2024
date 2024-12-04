@@ -14,8 +14,7 @@ func check(e error) {
 }
 
 func part1(lines []string) {
-	r, err := regexp.MustCompile(`mul\(\d{1,3},\d{1,3}\)`)
-	check(err)
+	r := regexp.MustCompile(`mul\(\d{1,3},\d{1,3}\)`)
 	sum := 0
 	for _, l := range lines {
 		for _, s := range r.FindAllString(l, -1) {
@@ -26,14 +25,13 @@ func part1(lines []string) {
 			sum += a * b
 		}
 	}
-	_, err = fmt.Println(sum)
+	_, err := fmt.Println(sum)
 	check(err)
 }
 
 func part2(lines []string) {
 	mul_regexp := `(mul\(\d{1,3},\d{1,3}\))|(do\(\))|(don\'t\(\))`
-	r, err := regexp.MustCompile(mul_regexp)
-	check(err)
+	r := regexp.MustCompile(mul_regexp)
 	sum := 0
 	isEnabled := true
 	for _, l := range lines {
@@ -57,7 +55,7 @@ func part2(lines []string) {
 			}
 		}
 	}
-	_, err = fmt.Println(sum)
+	_, err := fmt.Println(sum)
 	check(err)
 }
 
