@@ -41,7 +41,7 @@ func part1(lines []string) {
 		}
 
 		if checkIfSafe(levels) {
-			safes += 1
+			safes++
 		}
 	}
 
@@ -71,7 +71,7 @@ func part2(lines []string) {
 		}
 
 		if isSafe {
-			safes += 1
+			safes++
 		}
 	}
 

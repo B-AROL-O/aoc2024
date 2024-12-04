@@ -20,9 +20,9 @@ func searchWord(r int, c int, mat []string, rows int, cols int) int {
 	for _, dir := range dirs {
 		match := true
 		for i := range len(letters) {
-			next_r := r + (i+1)*dir[0]
-			next_c := c + (i+1)*dir[1]
-			if next_r < 0 || next_c < 0 || next_r >= rows || next_c >= cols || mat[next_r][next_c] != letters[i] {
+			nextR := r + (i+1)*dir[0]
+			nextC := c + (i+1)*dir[1]
+			if nextR < 0 || nextC < 0 || nextR >= rows || nextC >= cols || mat[nextR][nextC] != letters[i] {
 				match = false
 				break
 			}

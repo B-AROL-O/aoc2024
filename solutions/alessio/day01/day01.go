@@ -51,8 +51,8 @@ func part2(lines []string) {
 		var first, second int
 		_, err := fmt.Sscanf(l, "%d %d", &first, &second)
 		check(err)
-		leftCnt[first] += 1
-		rightCnt[second] += 1
+		leftCnt[first]++
+		rightCnt[second]++
 	}
 
 	simScore := 0
