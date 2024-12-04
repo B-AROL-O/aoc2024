@@ -26,8 +26,10 @@ As you scan through the corrupted memory, you notice that some of the conditiona
 
 There are two new instructions you'll need to handle:
 
+```text
     The do() instruction enables future mul instructions.
     The don't() instruction disables future mul instructions.
+```
 
 Only the most recent do() or don't() instruction applies. At the beginning of the program, mul instructions are enabled.
 
