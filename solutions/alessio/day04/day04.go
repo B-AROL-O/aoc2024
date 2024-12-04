@@ -12,7 +12,7 @@ func check(e error) {
 	}
 }
 
-func search_word(r int, c int, mat []string, rows int, cols int) int {
+func searchWord(r int, c int, mat []string, rows int, cols int) int {
 	dirs := [][]int{{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}}
 	letters := "MAS"
 
@@ -43,7 +43,7 @@ func part1(lines []string) {
 	for r := range rows {
 		for c := range cols {
 			if lines[r][c] == 'X' {
-				cnt += search_word(r, c, lines, rows, cols)
+				cnt += searchWord(r, c, lines, rows, cols)
 			}
 		}
 	}
@@ -51,13 +51,13 @@ func part1(lines []string) {
 	fmt.Println(cnt)
 }
 
-func search_x_mas(r int, c int, mat []string) int {
-	diag_1_1 := mat[r-1][c-1] == 'M' && mat[r+1][c+1] == 'S'
-	diag_1_2 := mat[r-1][c-1] == 'S' && mat[r+1][c+1] == 'M'
-	diag_2_1 := mat[r-1][c+1] == 'M' && mat[r+1][c-1] == 'S'
-	diag_2_2 := mat[r-1][c+1] == 'S' && mat[r+1][c-1] == 'M'
+func searchXMas(r int, c int, mat []string) int {
+	diag11 := mat[r-1][c-1] == 'M' && mat[r+1][c+1] == 'S'
+	diag12 := mat[r-1][c-1] == 'S' && mat[r+1][c+1] == 'M'
+	diag21 := mat[r-1][c+1] == 'M' && mat[r+1][c-1] == 'S'
+	diag22 := mat[r-1][c+1] == 'S' && mat[r+1][c-1] == 'M'
 
-	if (diag_1_1 || diag_1_2) && (diag_2_1 || diag_2_2) {
+	if (diag11 || diag12) && (diag21 || diag22) {
 		return 1
 	}
 
@@ -72,12 +72,13 @@ func part2(lines []string) {
 	for r := 1; r < rows-1; r++ {
 		for c := 1; c < cols-1; c++ {
 			if lines[r][c] == 'A' {
-				cnt += search_x_mas(r, c, lines)
+				cnt += searchXMas(r, c, lines)
 			}
 		}
 	}
 
-	fmt.Println(cnt)
+	_, err := fmt.Println(cnt)
+	check(err)
 }
 func main() {
 	data, err := os.ReadFile("./input04.txt")

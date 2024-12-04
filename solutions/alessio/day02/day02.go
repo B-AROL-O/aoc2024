@@ -14,13 +14,13 @@ func check(e error) {
 	}
 }
 
-func check_if_safe(levels []int) bool {
-	is_incr := levels[1]-levels[0] > 0
+func checkIfSafe(levels []int) bool {
+	isIncr := levels[1]-levels[0] > 0
 	for i := range len(levels) - 1 {
 		diff := levels[i+1] - levels[i]
-		if is_incr && (diff < 1 || diff > 3) {
+		if isIncr && (diff < 1 || diff > 3) {
 			return false
-		} else if !is_incr && (diff > -1 || diff < -3) {
+		} else if !isIncr && (diff > -1 || diff < -3) {
 			return false
 		}
 	}
@@ -31,50 +31,52 @@ func part1(lines []string) {
 	safes := 0
 
 	for _, l := range lines {
-		levels_str := strings.Split(l, " ")
+		levelsStr := strings.Split(l, " ")
 
 		var levels []int
-		for i := range len(levels_str) {
-			lvl, err := strconv.Atoi(levels_str[i])
+		for i := range len(levelsStr) {
+			lvl, err := strconv.Atoi(levelsStr[i])
 			check(err)
 			levels = append(levels, lvl)
 		}
 
-		if check_if_safe(levels) {
+		if checkIfSafe(levels) {
 			safes += 1
 		}
 	}
 
-	fmt.Println(safes)
+	_, err := fmt.Println(safes)
+	check(err)
 }
 
 func part2(lines []string) {
 	safes := 0
 
 	for _, l := range lines {
-		levels_str := strings.Split(l, " ")
+		levelsStr := strings.Split(l, " ")
 
 		var levels []int
-		for i := range len(levels_str) {
-			lvl, err := strconv.Atoi(levels_str[i])
+		for i := range len(levelsStr) {
+			lvl, err := strconv.Atoi(levelsStr[i])
 			check(err)
 			levels = append(levels, lvl)
 		}
 
-		is_safe := check_if_safe(levels)
+		isSafe := checkIfSafe(levels)
 		i := 0
-		for !is_safe && i < len(levels) {
-			levels_slice := slices.Concat(levels[:i], levels[i+1:]) // basically splice on i-th element
-			is_safe = check_if_safe(levels_slice)
+		for !isSafe && i < len(levels) {
+			levelsSlice := slices.Concat(levels[:i], levels[i+1:]) // basically splice on i-th element
+			isSafe = checkIfSafe(levelsSlice)
 			i++
 		}
 
-		if is_safe {
+		if isSafe {
 			safes += 1
 		}
 	}
 
-	fmt.Println(safes)
+	_, err := fmt.Println(safes)
+	check(err)
 }
 
 func main() {

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"sort"
-	"strconv"
 	"strings"
 )
 
@@ -22,50 +21,48 @@ func abs(x int) int {
 }
 
 func part1(lines []string) {
-	var first_list []int
-	var second_list []int
-	sum_diff := 0
+	var left []int
+	var right []int
+	sumDiff := 0
 
 	for _, l := range lines {
-		vals := strings.Split(l, "   ")
-		first, err := strconv.Atoi(vals[0])
+		var first, second int
+		_, err := fmt.Sscanf(l, "%d %d", &first, &second)
 		check(err)
-		second, err := strconv.Atoi(vals[1])
-		check(err)
-		first_list = append(first_list, first)
-		second_list = append(second_list, second)
+		left = append(left, first)
+		right = append(right, second)
 	}
 
-	sort.Ints(first_list)
-	sort.Ints(second_list)
+	sort.Ints(left)
+	sort.Ints(right)
 
 	for i := range len(lines) {
-		sum_diff += abs(second_list[i] - first_list[i])
+		sumDiff += abs(right[i] - left[i])
 	}
-	fmt.Println(sum_diff)
+	_, err := fmt.Println(sumDiff)
+	check(err)
 }
 
 func part2(lines []string) {
-	first_cnt := make(map[int]int)
-	second_cnt := make(map[int]int)
+	leftCnt := make(map[int]int)
+	rightCnt := make(map[int]int)
 
 	for _, l := range lines {
-		vals := strings.Split(l, "   ")
-		first, err := strconv.Atoi(vals[0])
+		var first, second int
+		_, err := fmt.Sscanf(l, "%d %d", &first, &second)
 		check(err)
-		second, err := strconv.Atoi(vals[1])
-		check(err)
-		first_cnt[first] += 1
-		second_cnt[second] += 1
+		leftCnt[first] += 1
+		rightCnt[second] += 1
 	}
 
-	sim_score := 0
+	simScore := 0
 
-	for k, v := range first_cnt {
-		sim_score += k * v * second_cnt[k]
+	for k, v := range leftCnt {
+		simScore += k * v * rightCnt[k]
 	}
 
-	fmt.Println(sim_score)
+	_, err := fmt.Println(simScore)
+	check(err)
 }
 
 func main() {
