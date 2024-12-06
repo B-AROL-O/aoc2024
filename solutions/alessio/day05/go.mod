@@ -1,3 +1,3 @@
-module aoc4
+module aoc5
 
 go 1.23.3
