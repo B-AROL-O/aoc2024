@@ -105,7 +105,8 @@ func main() {
 	data, err := os.ReadFile("./input08.txt")
 	check(err)
 
-	lines := strings.Split(strings.Trim(string(data), "\n"), "\n")
+	dataStr := strings.ReplaceAll(string(data), "\r\n", "\n")
+	lines := strings.Split(strings.Trim(dataStr, "\n"), "\n")
 
 	part1(lines)
 	part2(lines)

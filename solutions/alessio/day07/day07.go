@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 func check(e error) {
@@ -24,13 +24,13 @@ func checkEquation(seq []int, tot int, currPos int, currTot int, concatOp bool) 
 	if currPos == 1 {
 		currTot = seq[0]
 	}
-	if currTot + seq[currPos] <= tot {
-		if checkEquation(seq, tot, currPos + 1, currTot + seq[currPos], concatOp) {
+	if currTot+seq[currPos] <= tot {
+		if checkEquation(seq, tot, currPos+1, currTot+seq[currPos], concatOp) {
 			return true
 		}
 	}
-	if currTot * seq[currPos] <= tot {
-		if checkEquation(seq, tot, currPos + 1, currTot * seq[currPos], concatOp) {
+	if currTot*seq[currPos] <= tot {
+		if checkEquation(seq, tot, currPos+1, currTot*seq[currPos], concatOp) {
 			return true
 		}
 	}
@@ -38,7 +38,7 @@ func checkEquation(seq []int, tot int, currPos int, currTot int, concatOp bool) 
 		resStr := fmt.Sprintf("%d%d", currTot, seq[currPos])
 		resNum, err := strconv.Atoi(resStr)
 		check(err)
-		if resNum <= tot && checkEquation(seq, tot, currPos + 1, resNum, concatOp) {
+		if resNum <= tot && checkEquation(seq, tot, currPos+1, resNum, concatOp) {
 			return true
 		}
 	}
@@ -87,7 +87,8 @@ func main() {
 	data, err := os.ReadFile("./input07.txt")
 	check(err)
 
-	lines := strings.Split(strings.Trim(string(data), "\n"), "\n")
+	dataStr := strings.ReplaceAll(string(data), "\r\n", "\n")
+	lines := strings.Split(strings.Trim(dataStr, "\n"), "\n")
 
 	part1(lines)
 	part2(lines)
