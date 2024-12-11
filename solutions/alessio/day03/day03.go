@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -14,19 +15,17 @@ func check(e error) {
 }
 
 func part1(lines []string) {
-	r := regexp.MustCompile(`mul\(\d{1,3},\d{1,3}\)`)
+	r := regexp.MustCompile(`mul\((\d{1,3}),(\d{1,3})\)`)
 	sum := 0
 	for _, l := range lines {
-		for _, s := range r.FindAllString(l, -1) {
-			var a int
-			var b int
-			_, err := fmt.Sscanf(s, "mul(%d,%d)", &a, &b)
-			check(err)
+		matches := r.FindAllStringSubmatch(l, -1)
+		for _, match := range matches {
+			a, _ := strconv.Atoi(match[1])
+			b, _ := strconv.Atoi(match[2])
 			sum += a * b
 		}
 	}
-	_, err := fmt.Println(sum)
-	check(err)
+	fmt.Println(sum)
 }
 
 func part2(lines []string) {
@@ -36,8 +35,6 @@ func part2(lines []string) {
 	isEnabled := true
 	for _, l := range lines {
 		commands := r.FindAllString(l, -1)
-		_, err := fmt.Println(commands)
-		check(err)
 		for _, cmd := range commands {
 			switch cmd {
 			case "do()":
@@ -46,10 +43,8 @@ func part2(lines []string) {
 				isEnabled = false
 			default:
 				if isEnabled {
-					var a int
-					var b int
-					_, err := fmt.Sscanf(cmd, "mul(%d,%d)", &a, &b)
-					check(err)
+					var a, b int
+					fmt.Sscanf(cmd, "mul(%d,%d)", &a, &b)
 					sum += a * b
 				}
 			}

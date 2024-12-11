@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"slices"
 	"strconv"
 	"strings"
 )
@@ -32,12 +31,9 @@ func part1(lines []string) {
 
 	for _, l := range lines {
 		levelsStr := strings.Split(l, " ")
-
-		var levels []int
-		for i := range len(levelsStr) {
-			lvl, err := strconv.Atoi(levelsStr[i])
-			check(err)
-			levels = append(levels, lvl)
+		levels := make([]int, len(levelsStr))
+		for i, s := range levelsStr {
+			levels[i], _ = strconv.Atoi(s)
 		}
 
 		if checkIfSafe(levels) {
@@ -54,24 +50,21 @@ func part2(lines []string) {
 
 	for _, l := range lines {
 		levelsStr := strings.Split(l, " ")
-
-		var levels []int
-		for i := range len(levelsStr) {
-			lvl, err := strconv.Atoi(levelsStr[i])
-			check(err)
-			levels = append(levels, lvl)
+		levels := make([]int, len(levelsStr))
+		for i, s := range levelsStr {
+			levels[i], _ = strconv.Atoi(s)
 		}
 
-		isSafe := checkIfSafe(levels)
-		i := 0
-		for !isSafe && i < len(levels) {
-			levelsSlice := slices.Concat(levels[:i], levels[i+1:]) // basically splice on i-th element
-			isSafe = checkIfSafe(levelsSlice)
-			i++
-		}
-
-		if isSafe {
+		if checkIfSafe(levels) {
 			safes++
+			continue
+		}
+
+		for i := range levels {
+			if checkIfSafe(append(levels[:i], levels[i+1:]...)) {
+				safes++
+				break
+			}
 		}
 	}
 

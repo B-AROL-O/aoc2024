@@ -21,31 +21,29 @@ func abs(x int) int {
 }
 
 func part1(lines []string) {
-	var left []int
-	var right []int
-	sumDiff := 0
+	left := make([]int, len(lines))
+	right := make([]int, len(lines))
 
-	for _, l := range lines {
-		var first, second int
-		_, err := fmt.Sscanf(l, "%d %d", &first, &second)
+	for i, l := range lines {
+		_, err := fmt.Sscanf(l, "%d %d", &left[i], &right[i])
 		check(err)
-		left = append(left, first)
-		right = append(right, second)
 	}
 
 	sort.Ints(left)
 	sort.Ints(right)
 
-	for i := range len(lines) {
+	sumDiff := 0
+	for i := range lines {
 		sumDiff += abs(right[i] - left[i])
 	}
+
 	_, err := fmt.Println(sumDiff)
 	check(err)
 }
 
 func part2(lines []string) {
-	leftCnt := make(map[int]int)
-	rightCnt := make(map[int]int)
+	leftCnt := make(map[int]int, len(lines))
+	rightCnt := make(map[int]int, len(lines))
 
 	for _, l := range lines {
 		var first, second int
@@ -56,7 +54,6 @@ func part2(lines []string) {
 	}
 
 	simScore := 0
-
 	for k, v := range leftCnt {
 		simScore += k * v * rightCnt[k]
 	}

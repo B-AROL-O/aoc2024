@@ -36,12 +36,10 @@ func searchWord(r int, c int, mat []string, rows int, cols int) int {
 }
 
 func part1(lines []string) {
-	rows := len(lines)
-	cols := len(lines[0])
+	rows, cols := len(lines), len(lines[0])
 	cnt := 0
-
-	for r := range rows {
-		for c := range cols {
+	for r := 0; r < rows; r++ {
+		for c := 0; c < cols; c++ {
 			if lines[r][c] == 'X' {
 				cnt += searchWord(r, c, lines, rows, cols)
 			}
@@ -65,10 +63,8 @@ func searchXMas(r int, c int, mat []string) int {
 }
 
 func part2(lines []string) {
-	rows := len(lines)
-	cols := len(lines[0])
+	rows, cols := len(lines), len(lines[0])
 	cnt := 0
-
 	for r := 1; r < rows-1; r++ {
 		for c := 1; c < cols-1; c++ {
 			if lines[r][c] == 'A' {
@@ -77,8 +73,7 @@ func part2(lines []string) {
 		}
 	}
 
-	_, err := fmt.Println(cnt)
-	check(err)
+	fmt.Println(cnt)
 }
 func main() {
 	data, err := os.ReadFile("./input04.txt")
