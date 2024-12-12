@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
 func check(e error) {
@@ -89,6 +90,10 @@ func main() {
 	dataStr := strings.ReplaceAll(string(data), "\r\n", "\n")
 	lines := strings.Split(strings.Trim(dataStr, "\n"), "\n")
 
+	start := time.Now()
 	part1(lines)
+	fmt.Printf("part1: %s\n", time.Since(start))
+	start = time.Now()
 	part2(lines)
+	fmt.Printf("part2: %s\n", time.Since(start))
 }
