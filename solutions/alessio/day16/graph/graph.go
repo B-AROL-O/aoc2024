@@ -122,10 +122,13 @@ func (graph *Graph[T]) getClosest(nodes []T, dist map[T]int, visited map[T]bool)
 	return minNode
 }
 
-func (graph *Graph[T]) GetFullPathsEdges(start T, end T, dir T) []Edge[T] {
+func (graph *Graph[T]) GetFullPathsEdges(start T, end T, dir T, minFound *int) []Edge[T] {
 	allEdges := []Edge[T]{}
-	min := math.MaxInt
-	graph.getBestPathsRec(start, dir, &map[T]bool{}, []Edge[T]{}, &allEdges, end, 0, &min)
+	// oldMin := minFound
+	graph.getBestPathsRec(start, dir, &map[T]bool{}, []Edge[T]{}, &allEdges, end, 0, minFound)
+	// if minFound != oldMin {
+	// 	fmt.Println("min changed from", oldMin, "to", minFound, ". Should not happen.")
+	// }
 	return allEdges
 }
 

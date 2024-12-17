@@ -3,6 +3,7 @@ package main
 import (
 	"aoc16/graph"
 	"fmt"
+	"math"
 	"os"
 	"strings"
 	"time"
@@ -133,11 +134,13 @@ func getGraph(grid []string, rows int, cols int) (*graph.Graph[Pos], Pos, Pos) {
 	return &g, start, end
 }
 
-func solve1(grid []string) {
+func solve1(grid []string) int {
 	rows, cols := len(grid), len(grid[0])
 	g, start, end := getGraph(grid, rows, cols)
 	// printMazeWithNodes(grid, rows, cols, g)
-	fmt.Println(g.ShortestPath(start, end, dirs[0]))
+	min := g.ShortestPath(start, end, dirs[0])
+	fmt.Println(min)
+	return min
 }
 
 func abs(x int) int {
@@ -162,16 +165,76 @@ func getDir(from Pos, to Pos) Pos {
 	}
 }
 
-func solve2(grid []string) {
+type PathPos struct {
+	pos   Pos
+	dir   Pos
+	edges []PathEdge
+	score int
+}
+
+type PathEdge struct {
+	from Pos
+	to   Pos
+}
+
+func BFS(graph *graph.Graph[Pos], start Pos, end Pos) []PathEdge {
+	queue := []PathPos{{start, dirs[0], []PathEdge{}, 0}}
+	visited := map[PosDir]bool{}
+	minScore := math.MaxInt
+	bestPathsEdges := []PathEdge{}
+	distinct := 0
+
+	for len(queue) > 0 {
+		curr := queue[0]
+		queue = queue[1:]
+
+		if curr.pos == end {
+			// do something when path is found
+			if curr.score < minScore {
+				distinct = 1
+				minScore = curr.score
+				bestPathsEdges = curr.edges
+			} else if curr.score == minScore {
+				distinct++
+				bestPathsEdges = append(bestPathsEdges, curr.edges...)
+			}
+			continue
+		}
+
+		if visited[PosDir{curr.pos, curr.dir}] {
+			continue
+		}
+
+		for _, e := range graph.AdjList[curr.pos] {
+			next := e.To.Val
+			dir := getDir(curr.pos, next)
+			if !visited[PosDir{next, dir}] {
+				weight := e.Weight
+				if dir != curr.dir {
+					weight += 1000
+				}
+				if curr.score+weight <= minScore {
+					queue = append(queue, PathPos{next, dir, append(curr.edges, PathEdge{curr.pos, next}), curr.score + weight})
+				}
+			}
+		}
+	}
+
+	fmt.Printf("found min %d with %d distinct paths\n", minScore, distinct)
+
+	return bestPathsEdges
+}
+
+func solve2(grid []string, minFound int) {
 	rows, cols := len(grid), len(grid[0])
 	g, start, end := getGraph(grid, rows, cols)
-	edges := g.GetFullPathsEdges(start, end, dirs[0])
+	edges := BFS(g, start, end)
 
 	tiles := map[Pos]bool{}
 	for _, e := range edges {
-		dir := getDir(e.From, e.To.Val)
-		curr := Pos{e.From.r, e.From.c}
-		for curr.r != e.To.Val.r || curr.c != e.To.Val.c {
+		dir := getDir(e.from, e.to)
+		curr := Pos{e.from.r, e.from.c}
+		for curr.r != e.to.r || curr.c != e.to.c {
 			tiles[curr] = true
 			curr.r += dir.r
 			curr.c += dir.c
@@ -193,12 +256,12 @@ func solve2(grid []string) {
 	fmt.Println(len(tiles))
 }
 
-func part1(grid []string) {
-	solve1(grid)
+func part1(grid []string) int {
+	return solve1(grid)
 }
 
-func part2(grid []string) {
-	solve2(grid)
+func part2(grid []string, minFound int) {
+	solve2(grid, minFound)
 }
 
 func main() {
@@ -208,9 +271,9 @@ func main() {
 	lines := strings.Split(strings.Trim(dataStr, "\n"), "\n")
 
 	start := time.Now()
-	part1(lines)
+	min := part1(lines)
 	fmt.Printf("part1: %s\n", time.Since(start))
 	start = time.Now()
-	part2(lines)
+	part2(lines, min)
 	fmt.Printf("part2: %s\n", time.Since(start))
 }
