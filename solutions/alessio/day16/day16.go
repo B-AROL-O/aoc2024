@@ -153,6 +153,7 @@ func abs(x int) int {
 func getDir(from Pos, to Pos) Pos {
 	diffR := to.r - from.r
 	diffC := to.c - from.c
+
 	if diffR == 0 {
 		dirC := diffC / abs(diffC)
 		return Pos{0, dirC}
@@ -166,9 +167,8 @@ func getDir(from Pos, to Pos) Pos {
 }
 
 type PathPos struct {
-	pos   Pos
-	dir   Pos
-	edges []PathEdge
+	this  PosDir
+	prev  PosDir
 	score int
 }
 
@@ -177,83 +177,147 @@ type PathEdge struct {
 	to   Pos
 }
 
-func BFS(graph *graph.Graph[Pos], start Pos, end Pos) []PathEdge {
-	queue := []PathPos{{start, dirs[0], []PathEdge{}, 0}}
-	visited := map[PosDir]bool{}
-	minScore := math.MaxInt
-	bestPathsEdges := []PathEdge{}
-	distinct := 0
+type Ugly struct {
+	from PosDir
+	to   PosDir
+}
+
+func BFS(graph *graph.Graph[Pos], start Pos, end Pos) map[Pos]bool {
+	startPosDir := PosDir{start, dirs[0]}
+	queue := []PathPos{{startPosDir, PosDir{}, 0}}
+	minScores := map[PosDir]int{}
+	prevs := map[PosDir][]PosDir{}
 
 	for len(queue) > 0 {
 		curr := queue[0]
 		queue = queue[1:]
 
-		if curr.pos == end {
-			// do something when path is found
-			if curr.score < minScore {
-				distinct = 1
-				minScore = curr.score
-				bestPathsEdges = curr.edges
-			} else if curr.score == minScore {
-				distinct++
-				bestPathsEdges = append(bestPathsEdges, curr.edges...)
-			}
+		currPosDir := curr.this
+		_, exists := minScores[currPosDir]
+		// if score not yet evaluated or the current score is lower than the previous one, update score and previous
+		if !exists || curr.score < minScores[currPosDir] {
+			minScores[currPosDir] = curr.score
+			prevs[currPosDir] = []PosDir{curr.prev}
+		} else if curr.score == minScores[currPosDir] {
+			prevs[currPosDir] = append(prevs[currPosDir], curr.prev)
+		}
+
+		// if reached the end, continue to find potentially better (or equivalent) paths
+		if currPosDir.pos == end {
 			continue
 		}
 
-		if visited[PosDir{curr.pos, curr.dir}] {
-			continue
-		}
-
-		for _, e := range graph.AdjList[curr.pos] {
+		// for every adjacent node, if the score for reaching it
+		// in a certain direction is lower than the previous one, add it to the queue
+		for _, e := range graph.AdjList[currPosDir.pos] {
 			next := e.To.Val
-			dir := getDir(curr.pos, next)
-			if !visited[PosDir{next, dir}] {
-				weight := e.Weight
-				if dir != curr.dir {
-					weight += 1000
-				}
-				if curr.score+weight <= minScore {
-					queue = append(queue, PathPos{next, dir, append(curr.edges, PathEdge{curr.pos, next}), curr.score + weight})
-				}
+			dir := getDir(currPosDir.pos, next)
+			weight := e.Weight
+			if dir != currPosDir.dir {
+				weight += 1000
+			}
+			nextPosDir := PosDir{next, dir}
+			if min, exists := minScores[nextPosDir]; !exists || curr.score+weight <= min {
+				queue = append(queue, PathPos{nextPosDir, currPosDir, curr.score + weight})
 			}
 		}
 	}
 
-	fmt.Printf("found min %d with %d distinct paths\n", minScore, distinct)
+	fmt.Println("here 1")
+	// find all the directions from where the best paths come to the end node
+	minFinalScore := math.MaxInt
+	minPosDirs := []PosDir{}
+	for p, s := range minScores {
+		if p.pos == end {
+			if s < minFinalScore {
+				minFinalScore = s
+				minPosDirs = []PosDir{p}
+			} else if s == minFinalScore {
+				minPosDirs = append(minPosDirs, p)
+			}
+		}
+	}
 
-	return bestPathsEdges
+	fmt.Println("here 2")
+
+	// walk down each path and mark all the visited tiles
+	edges := []PathEdge{}
+	nodeQueue := []PosDir{}
+	visitedEdges := map[Ugly]bool{}
+	nodeQueue = append(nodeQueue, minPosDirs...)
+	for len(nodeQueue) > 0 {
+		node := nodeQueue[0]
+		nodeQueue = nodeQueue[1:]
+		for _, adj := range prevs[node] {
+			if adj.pos.r == 0 && adj.pos.c == 0 {
+				//sentinel node, skip
+				continue
+			}
+			e := Ugly{node, adj}
+			if visitedEdges[e] {
+				continue
+			}
+			visitedEdges[e] = true
+
+			nodeQueue = append(nodeQueue, adj)
+			edges = append(edges, PathEdge{node.pos, adj.pos})
+		}
+	}
+
+	fmt.Println("here 3")
+
+	visited := map[Pos]bool{}
+	for _, e := range edges {
+		if e.from == e.to {
+			fmt.Println("found self-loop edge, should be end node. Exiting if not true.")
+			fmt.Printf("found from node (%d, %d) to node (%d, %d)\n", e.from.r, e.from.c, e.to.r, e.to.c)
+			if e.from != end {
+				panic("IT WAS NOT END NODE. PANIC.")
+			}
+			continue
+		}
+		dir := getDir(e.from, e.to)
+		r, c := e.from.r, e.from.c
+		for r != e.to.r || c != e.to.c {
+			visited[Pos{r, c}] = true
+			r += dir.r
+			c += dir.c
+		}
+		visited[e.to] = true
+	}
+
+	return visited
 }
 
 func solve2(grid []string, minFound int) {
 	rows, cols := len(grid), len(grid[0])
 	g, start, end := getGraph(grid, rows, cols)
-	edges := BFS(g, start, end)
+	visited := BFS(g, start, end)
 
-	tiles := map[Pos]bool{}
-	for _, e := range edges {
-		dir := getDir(e.from, e.to)
-		curr := Pos{e.from.r, e.from.c}
-		for curr.r != e.to.r || curr.c != e.to.c {
-			tiles[curr] = true
-			curr.r += dir.r
-			curr.c += dir.c
-		}
-		tiles[curr] = true
-	}
-
-	// for r := 0; r < rows; r++ {
-	// 	for c := 0; c < cols; c++ {
-	// 		if tiles[Pos{r, c}] {
-	// 			fmt.Print("O")
-	// 		} else {
-	// 			fmt.Printf("%c", grid[r][c])
-	// 		}
+	// tiles := map[Pos]bool{}
+	// for _, e := range edges {
+	// 	dir := getDir(e.from, e.to)
+	// 	curr := Pos{e.from.r, e.from.c}
+	// 	for curr.r != e.to.r || curr.c != e.to.c {
+	// 		tiles[curr] = true
+	// 		curr.r += dir.r
+	// 		curr.c += dir.c
 	// 	}
-	// 	fmt.Println()
+	// 	tiles[curr] = true
 	// }
-	// fmt.Println()
-	fmt.Println(len(tiles))
+
+	for r := 0; r < rows; r++ {
+		for c := 0; c < cols; c++ {
+			if visited[Pos{r, c}] {
+				fmt.Print("O")
+			} else {
+				fmt.Printf("%c", grid[r][c])
+			}
+		}
+		fmt.Println()
+	}
+	fmt.Println()
+	fmt.Println(len(visited))
 }
 
 func part1(grid []string) int {
