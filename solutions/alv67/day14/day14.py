@@ -1,9 +1,11 @@
+# pylint: skip-file
 # super-linter-disable-file
 # --- Part Two ---
 
+import random
+
 # from icecream import ic
 import re
-import random
 import tkinter as tk
 
 puzzle = {"filename": "input.txt", "width": 101, "height": 103}
@@ -13,6 +15,7 @@ puzzle = {"filename": "input.txt", "width": 101, "height": 103}
 
 
 class Robot:
+
     def __init__(self, x, y, vx, vy, room_instance):
         self.x = x
         self.y = y
@@ -154,7 +157,7 @@ pattern = r"p=(-?\d+),(-?\d+)\s+v=(-?\d+),(-?\d+)"
 
 robot_list = []
 
-with open(puzzle["filename"], "r") as file:
+with open(puzzle["filename"], "rt") as file:
 
     for line in file:
         match = re.match(pattern, line.strip())
