@@ -1,10 +1,9 @@
+# super-linter-disable-file
 # --- Part Two ---
 
 # from icecream import ic
 import re
-import time
 import random
-from IPython.display import clear_output
 import tkinter as tk
 
 puzzle = {"filename": "input.txt", "width": 101, "height": 103}
