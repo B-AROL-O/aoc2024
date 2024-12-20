@@ -157,7 +157,7 @@ pattern = r"p=(-?\d+),(-?\d+)\s+v=(-?\d+),(-?\d+)"
 
 robot_list = []
 
-with open(puzzle["filename"], "rt") as file:
+with open(str(puzzle["filename"]), "rt") as file:  
 
     for line in file:
         match = re.match(pattern, line.strip())
