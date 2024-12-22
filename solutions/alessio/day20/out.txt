@@ -1,0 +1,3 @@
+
+Removing obstacle 8,7
+Saved 40 picoseconds.
