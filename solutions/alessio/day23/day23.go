@@ -34,9 +34,9 @@ func buildGraph(lines []string) *graph.Graph[string] {
 	return &g
 }
 
-func setToString(nodes []string) string {
+func setToString(nodes []string, sep string) string {
 	sort.Strings(nodes)
-	return strings.Join(nodes, "-")
+	return strings.Join(nodes, sep)
 }
 
 func solve(lines []string) {
@@ -55,7 +55,7 @@ func solve(lines []string) {
 		for i := 0; i < len(adj); i++ {
 			for j := i + 1; j < len(adj); j++ {
 				if g.HasEdge(adj[i], adj[j]) || g.HasEdge(adj[j], adj[i]) {
-					distinct[setToString([]string{n, adj[i], adj[j]})] = true
+					distinct[setToString([]string{n, adj[i], adj[j]}, "-")] = true
 				}
 			}
 		}
@@ -68,7 +68,39 @@ func part1(lines []string) {
 }
 
 func part2(lines []string) {
-	// solve(lines)
+	g := buildGraph(lines)
+	nodes := g.GetNodesVals()
+	sort.Strings(nodes)
+	maxClique := []string{}
+	visited := map[string]bool{}
+
+	for _, node := range nodes {
+		if visited[node] {
+			continue
+		}
+		clique := []string{node}
+		visited[node] = true
+		for i := 0; i < len(nodes); i++ {
+			if visited[nodes[i]] {
+				continue
+			}
+			isValid := true
+			for _, n := range clique {
+				if !g.HasEdge(n, nodes[i]) {
+					isValid = false
+					break
+				}
+			}
+			if isValid {
+				clique = append(clique, nodes[i])
+			}
+		}
+		if len(clique) > len(maxClique) {
+			maxClique = clique
+		}
+	}
+
+	fmt.Println(setToString(maxClique, ","))
 }
 
 func main() {
