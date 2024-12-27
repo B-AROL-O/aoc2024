@@ -1,0 +1,72 @@
+part1: 26.958µs
+part2: 42ns
+
+
+
+
+
+
+error: result string for z06 is 8 bits long
+error: expected 1 for z06
+error: result string for z06 is 8 bits long
+error: expected 1 for z06
+error: expected carry bit 1 for z06 (1000000)
+error: expected sum bit 0 for z06 (1000000)
+
+
+
+
+
+
+
+
+error: expected carry bit 1 for z14 (10000000000000000)
+
+error: result string for z15 is 17 bits long
+error: expected 1 for z15
+error: result string for z15 is 17 bits long
+error: expected 1 for z15
+error: expected carry bit 1 for z15 (1000000000000000)
+error: expected sum bit 0 for z15 (1000000000000000)
+
+
+
+
+
+
+
+error: expected carry bit 1 for z22 (1000000000000000000000000)
+
+error: result string for z23 is 25 bits long
+error: expected 1 for z23
+error: result string for z23 is 25 bits long
+error: expected 1 for z23
+error: expected carry bit 1 for z23 (100000000000000000000000)
+error: expected sum bit 0 for z23 (100000000000000000000000)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+error: expected carry bit 1 for z38 (10000000000000000000000000000000000000000)
+
+error: result string for z39 is 41 bits long
+error: expected 1 for z39
+error: result string for z39 is 41 bits long
+error: expected 1 for z39
+
+
+
+
+
+
